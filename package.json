@@ -1,0 +1,22 @@
+{
+  "name": "telegram_bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bogdannov/bot.git"
+  },
+  "author": "Bohdan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bogdannov/bot/issues"
+  },
+  "homepage": "https://github.com/bogdannov/bot#readme",
+  "dependencies": {
+    "node-telegram-bot-api": "^0.25.0"
+  }
+}
