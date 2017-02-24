@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/bogdannov/bot#readme",
   "dependencies": {
-    "node-telegram-bot-api": "^0.25.0"
+    "node-telegram-bot-api": "^0.25.0",
+    "underscore-node": "^0.1.2"
   }
 }
