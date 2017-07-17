@@ -1,7 +1,12 @@
 var TelegramBot = require('node-telegram-bot-api');
+var fs = require('fs');
 var _ = require('underscore-node');
 var token = '308660723:AAEnoREKI1Mz06ZMZndn06kFhhksbd8j2yA'; 
 var bot = new TelegramBot(token, {polling: true}); 
+
+var img = fs.readFileSync('./cut_me.jpg');
+
+bot.sendMessage(316753298, 'Очень жарко');
 
 var responseOptions = {
     hello:{
@@ -109,7 +114,7 @@ var responseOptions = {
         option:0,
         items:{
              '0': {
-                text: 'Наверное занят немножко, но спешит',
+                text: 'хз',
                 stiker: 'BQADAgADZgMAAvoLtggb_O7T-NnQTAI' 
             },
             '1': {
@@ -117,11 +122,11 @@ var responseOptions = {
                 stiker: false 
             },
             '2': {
-                text: 'Точно не знаю, но уверен, что скоро будет:)',
+                text: 'а ты?',
                 stiker: false, 
             },
             '3':{
-                text: 'Тут со мной сидит, скоро придет, помогает мне чуть-чуть',
+                text: 'Не знаю',
                 stiker: false
             }
         }
@@ -181,6 +186,116 @@ var responseOptions = {
             },
         }
     },
+    quick: {
+        option: 0,
+        items:[
+            {
+                text: `cлишком быстро! Либо слишком легкий вопрос , либо ты мухлюешь, давай другой`,
+                stiker: 'CAADAgADIQEAAjSbDhCFO2T2Nld11QI',
+            },
+            {
+                text: `Cлушай, харош это делать,слишком быстро! я слежу за тобой! Еще один давай!`,
+                stiker: '',
+            },
+             {
+                text: `УУУУУУУУУУУ, Правильно, но , давай другой вопрос!`,
+                stiker: '',
+            }
+        ],
+    },
+    
+    questions: {
+        option: 0,
+        active: false,
+        startTime: 0,
+        items:[
+            {
+                text: `Сколько девяток от 1 до 100 (цифрами)`,
+                stiker: '',
+                answer: 20
+            },
+            {
+                text: `Чем можно поделиться только один раз?`,
+                stiker: '',
+                answer: 'секретом'
+            },
+             {
+                text: `Какая планета названа не в честь какого-либо Бога?`,
+                stiker: '',
+                answer: 'земля'
+            }
+        ],
+    },
+    negativeAnswer: {
+        option: 0,
+        active: false,
+        startTime: 0,
+        items:[
+            {
+                text: `Я думаю.............................., что это.................... НЕПРАВИЛЬНО!!!`,
+                stiker: 'CAADAgADCwEAAooSqg7W-Kv96OaTVgI',
+            },
+             {
+                text: `Как говорил мой дед, "С утра голова работает лучше" вот он был прав, а ты НЕТ`,
+                stiker: 'CAADAgADoAMAAvoLtgj5yjtMiAXK4gI',
+            },
+            {
+                text: `Наконец-то)))))) А не, неправильно!!)))`,
+                stiker: '',
+            },
+            {
+                text: `perdona меня, но короче нифига`,
+                stiker: '',
+            },
+            {
+                text: `Миша все фигня, давай по новой!`,
+                stiker: '',
+            },
+             {
+                text: `Ты ходил на курсы как отвечать всегда неправильно? Ты был там лучшим, не сомневаюсь))`,
+                stiker: '',
+            },
+            {
+                text: `It seems like wrong`,
+                stiker: 'CAADAgADYgEAAvR7GQABrUv2s1LyYdYC',
+            },
+            {
+                text: `ДА!!! А нет, снова нет))))`,
+                stiker: '',
+            },
+            {
+                text: `Н Е П Р А В И Л Ь Н О`,
+                stiker: '',
+            },
+        ],
+    },
+    start: {
+        option: 0,
+        active: false,
+        items:[
+            {
+                text: `Привет! Тут мне птички нашептали, что у тебя сегодня праздник и конечно же у меня есть для тебя подарок, НО я тебе отдам его при условии, что ты отгадаешь мою загадку, которую не могут решить мои нейронные сети, потому что я не могу так больше, ай нид ответ, ты готов?`,
+                stiker: 'BQADAgAD8gEAAjSbDhBvoJ7KsVm-8QI',
+            }
+        ]
+    },
+    negative: {
+        option: 0,
+        items:[
+            {
+                text: 'Пиши, когда будешь готов',
+                stiker: '',
+            },
+            {
+                text: 'Ответ не принят, жду другого',
+                stiker: '',
+            },
+             {
+                text: 'Пфффф, нифига не дам, соглашайся и продолжим',
+                stiker: '',
+            },
+        ]
+    },
     default:{
         option:0,
         items:{
@@ -206,11 +321,56 @@ var responseOptions = {
 
 bot.on('message', function (msg) { 
 console.log(msg);
+console.log(msg.date);
 var chatId = msg.chat.id;
 var response; 
-
 var lowMsg = msg.text.toLowerCase();
 var match = lowMsg.match( /напомни/ig);
+    /**
+     * Start 
+    */
+    if(lowMsg.match( /start/ig) != null){
+        answer('start', chatId);
+        responseOptions.start.active = true;
+        return;
+    }
+    /**
+     * Wait for agree to start
+     */
+    if(responseOptions.start.active){
+        if(lowMsg.match( /да/ig) != null || lowMsg.match( /гото/ig) != null || lowMsg.match( /коне/ig) != null){
+            responseOptions.questions.active = true;
+            answer('questions', chatId);
+            responseOptions.start.active = false;
+            responseOptions.questions.active = true;
+            console.log(msg.date);
+            responseOptions.questions.startTime = msg.date;
+        }
+        else{
+            answer('negative', chatId);
+        }
+        return;
+    }
+    /**
+     * Answer on question
+     */
+    if(responseOptions.questions.active){
+        if(checkAnswer(lowMsg)){
+            if(checkTime(msg.date)){
+                successAnswer(chatId);
+            }
+            else{
+                answer('quick', chatId);
+                answer('questions', chatId);
+            }
+        }
+        else{
+            answer('negativeAnswer', chatId);
+        }
+        return;
+    }
+
+
     if(lowMsg.match( /прив/ig) != null){ 
        answer('hello', chatId);
     }
@@ -257,10 +417,11 @@ var match = lowMsg.match( /напомни/ig);
 });
 
 var answer = function(categoryName, chatId){
+    // console.log(categoryName)
     var optionNumb = responseOptions[categoryName].option;
     var items = responseOptions[categoryName].items;
     sendMsg(chatId, items[optionNumb].text);
-    if(items[optionNumb].stiker != false){
+    if(items[optionNumb].stiker){
         sendSticers(chatId, items[optionNumb].stiker);
     }
     responseOptions[categoryName].option = optionNumb + 1;
@@ -292,9 +453,28 @@ var n = d.getDay();
 if(n === 1){ 
     // bot.sendMessage(302447970, "Теперь я умею немного напоминать и искать слова 'напомни' ");
 }
-
-
-
-
-
 // bot.sendMessage(199594454, 'Привет');
+
+
+function checkAnswer(answer){
+    var answerOption = responseOptions.questions.option - 1;
+
+    answerOption = answerOption < 0 ? responseOptions.questions.items.length - 1 : answerOption;
+
+    console.log(answerOption)
+    return answer == responseOptions.questions.items[answerOption].answer;
+}
+
+function checkTime(time){
+    console.log(time - responseOptions.questions.startTime);
+    return time - responseOptions.questions.startTime > 45;
+}
+
+function successAnswer(chatId){
+    sendSticers( chatId ,'CAADAgADPwEAAvR7GQABViioNKnM2JoC');
+    sendMsg(chatId ,'Ураааа, это правиииильнооо)) поздравляю  с  правильным ответом и Днем рождения!!!');
+     bot.sendPhoto(chatId, img);
+    setTimeout(function() {
+        bot.sendMessage(chatId, 'И еще кое-что, Богдан просил передать, ты пидр ^^' );
+    }, 15000);
+}
