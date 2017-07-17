@@ -4,9 +4,9 @@ var _ = require('underscore-node');
 var token = '308660723:AAEnoREKI1Mz06ZMZndn06kFhhksbd8j2yA'; 
 var bot = new TelegramBot(token, {polling: true}); 
 
-var img = fs.readFileSync('./cut_me.jpg');
+var img = fs.readFileSync('./admin.jpg');
 
-bot.sendMessage(316753298, 'Очень жарко');
+// bot.sendMessage(316753298, 'Очень жарко');
 
 var responseOptions = {
     hello:{
@@ -473,7 +473,8 @@ function checkTime(time){
 function successAnswer(chatId){
     sendSticers( chatId ,'CAADAgADPwEAAvR7GQABViioNKnM2JoC');
     sendMsg(chatId ,'Ураааа, это правиииильнооо)) поздравляю  с  правильным ответом и Днем рождения!!!');
-     bot.sendPhoto(chatId, img);
+    bot.sendPhoto(chatId, img);
+    sendMsg(chatId ,'Это твой последний пункт. Езжай через мак возьми чонить, потом на то место на фотке и произнеси "Мне 23 и это год будет крутой!" и получи свои подарки!');
     setTimeout(function() {
         bot.sendMessage(chatId, 'И еще кое-что, Богдан просил передать, ты пидр ^^' );
     }, 15000);
